@@ -65,7 +65,9 @@ RUN mkdir -p /apps/build && \
 # Add custom files, set permissions
 ADD entrypoint.sh .
 
-RUN chmod +x entrypoint.sh
+RUN mkdir $LIVY_APP_PATH/logs
+RUN chmod u+x entrypoint.sh
+RUN chmod u+w /apps
 
 # Expose port
 EXPOSE 8998
