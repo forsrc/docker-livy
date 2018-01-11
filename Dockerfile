@@ -1,5 +1,5 @@
 FROM ubuntu:14.04
-MAINTAINER tobilg <tobilg@gmail.com>
+MAINTAINER forsrc <forsrc@gmail.com>
 
 # Add R list
 RUN echo 'deb http://cran.rstudio.com/bin/linux/ubuntu trusty/' | sudo tee -a /etc/apt/sources.list.d/r.list && \
@@ -18,12 +18,12 @@ RUN apt-get update && apt-get install -yq --no-install-recommends --force-yes \
     rm -rf /var/lib/apt/lists/*
 
 # Overall ENV vars
-ENV SPARK_VERSION 1.6.1
+ENV SPARK_VERSION       1.6.1
 ENV MESOS_BUILD_VERSION 0.28.0-2.0.16
-ENV LIVY_BUILD_VERSION livy-server-0.3.0-SNAPSHOT
+ENV LIVY_BUILD_VERSION  0.4.0-incubating
 
 # Set install path for Livy
-ENV LIVY_APP_PATH /apps/$LIVY_BUILD_VERSION
+ENV LIVY_APP_PATH   /apps/livy-$LIVY_BUILD_VERSION-bin
 
 # Set build path for Livy
 ENV LIVY_BUILD_PATH /apps/build/livy
@@ -57,13 +57,11 @@ RUN wget $SPARK_DOWNLOAD_URL && \
 # Clone Livy repository
 RUN mkdir -p /apps/build && \
     cd /apps/build && \
-	git clone https://github.com/cloudera/livy.git && \
-	cd $LIVY_BUILD_PATH && \
-    mvn -DskipTests -Dspark.version=$SPARK_VERSION clean package && \
-    unzip $LIVY_BUILD_PATH/assembly/target/$LIVY_BUILD_VERSION.zip -d /apps && \
+	  wget http://ftp.yz.yamagata-u.ac.jp/pub/network/apache/incubator/livy/$LIVY_BUILD_VERSION/livy-$LIVY_BUILD_VERSION-bin.zip && \
+    unzip livy-$LIVY_BUILD_VERSION-bin.zip -d /apps && \
     rm -rf $LIVY_BUILD_PATH && \
-	mkdir -p $LIVY_APP_PATH/upload
-	
+	  mkdir -p $LIVY_APP_PATH/upload
+
 # Add custom files, set permissions
 ADD entrypoint.sh .
 
